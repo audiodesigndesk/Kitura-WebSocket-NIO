@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 /**
@@ -29,7 +29,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/Kitura/Kitura-NIO.git", from: "2.4.200"),
+        .package(url: "https://github.com/audiodesigndesk/Kitura-NIO.git", branch: "add"),
         .package(url: "https://github.com/Kitura/BlueCryptor.git", from: "1.0.200"),
         .package(url: "https://github.com/Kitura/Kitura-WebSocket-Compression.git", from: "0.1.200")
     ],
@@ -38,12 +38,28 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "KituraWebSocket",
-            dependencies: ["WebSocketCompression", "KituraNet"]),
+            dependencies: [
+                .product(name: "WebSocketCompression", package: "Kitura-WebSocket-Compression"),
+                .product(name: "KituraNet", package: "Kitura-NIO")
+            ]),
         .target(
             name: "TestWebSocketService",
-            dependencies: ["KituraNet", "KituraWebSocket", "WebSocketCompression"]),
+            dependencies: [
+                "KituraWebSocket",
+
+                    .product(name: "WebSocketCompression", package: "Kitura-WebSocket-Compression"),
+                    .product(name: "KituraNet", package: "Kitura-NIO")
+            ]
+        
+        ),
         .testTarget(
             name: "KituraWebSocketTests",
-            dependencies: ["Cryptor", "WebSocketCompression", "KituraWebSocket"])
+            dependencies: [
+                "KituraWebSocket",
+
+                .product(name: "Cryptor", package: "BlueCryptor"),
+                .product(name: "WebSocketCompression", package: "Kitura-WebSocket-Compression")
+            ]
+        )
     ]
 )
